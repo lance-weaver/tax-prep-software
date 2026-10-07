@@ -1,0 +1,2 @@
+emcc emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.11 (a0014542110d6078c3a1a7941fa1ddb3a2281f16)
+built 2026-10-07T22:50:28Z

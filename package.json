@@ -1,0 +1,27 @@
+{
+  "name": "tax-prep-software",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "NEXT_TELEMETRY_DISABLED=1 next dev --webpack",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build --webpack",
+    "start": "next start --hostname 0.0.0.0",
+    "build:wasm": "bash scripts/build-wasm.sh",
+    "smoke": "tsx scripts/smoke.ts"
+  },
+  "dependencies": {
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

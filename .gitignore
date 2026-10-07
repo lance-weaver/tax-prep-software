@@ -1,0 +1,8 @@
+node_modules
+.next
+.env
+.env.local
+taxes-data
+*.log
+tsconfig.tsbuildinfo
+.DS_Store
