@@ -36,7 +36,8 @@ This is a filing aid, not tax advice.
 
 ## Stack
 
-Next.js (App Router) and TypeScript on Node 20. The sign-in gate is
+Next.js 16.3.6 (App Router) and TypeScript on Node 20. The config is
+`next.config.mjs` so Hostinger can load it without native SWC. The sign-in gate is
 `src/proxy.ts`: an HMAC cookie checked on every page and API, with the
 username and password taken from `TAXES_AUTH_USER` and `TAXES_AUTH_PASSWORD`.
 No analytics.
@@ -88,7 +89,10 @@ In hPanel, for the Node.js website:
 | Start command | `npm run start` |
 | Root | this repository |
 
-Do not set the build command to `npm run build:wasm`.
+Do not set the build command to `npm run build:wasm`. Hostinger's glibc is
+older than 2.29, so the native SWC binary does not load. `next.config.mjs`
+and `next build --webpack` are what let that machine fall back to
+`@next/swc-wasm-nodejs`. Do not rename the config back to `next.config.ts`.
 
 Environment variables (hPanel, not the repo):
 

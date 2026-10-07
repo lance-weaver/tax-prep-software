@@ -4,8 +4,10 @@ This app is deployed the same way as the finance dashboard on the same
 Hostinger shared-hosting account.
 
 - Node 20. Hostinger runs `npm run build` and `npm run start`.
-- `npm run build` is `next build --webpack`. Turbopack fails on Hostinger's
-  glibc (older than 2.29).
+- Next is pinned to 16.3.6. The config file is `next.config.mjs`, not
+  `next.config.ts`. Hostinger's glibc is older than 2.29, so native SWC
+  cannot load `next.config.ts`, and Turbopack cannot run. `npm run build` is
+  `next build --webpack`, which uses the SWC WebAssembly fallback.
 - The build machine has no `make` and no C compiler. Do not add a native
   module, `node-gyp`, or a compile step to `npm run build` or `npm run start`.
 - OpenTaxSolver is already compiled to WebAssembly in `wasm/`. Rebuild it only
