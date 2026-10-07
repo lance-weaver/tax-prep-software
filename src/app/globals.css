@@ -1,0 +1,181 @@
+:root {
+  --ink: #1c1915;
+  --muted: #5c564c;
+  --line: #d9d1c3;
+  --paper: #f7f3ea;
+  --card: #fffdf8;
+  --accent: #1f4d3a;
+  --accent-soft: #e5f0ea;
+  --warn: #8a3b12;
+  --warn-bg: #f8efe6;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.45 "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+a { color: var(--accent); }
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 6px;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+button:disabled { opacity: 0.55; cursor: wait; }
+
+.shell { max-width: 1080px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+
+header.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+header.top h1 {
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem;
+}
+
+header.top p { margin: 0; color: var(--muted); }
+
+.banner, .error, .notes {
+  border: 1px solid var(--line);
+  background: var(--warn-bg);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.error { background: #fdecea; border-color: #e7c1bb; color: #6d2218; }
+
+section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem 1rem 1rem;
+  margin-bottom: 0.9rem;
+}
+
+section h2 {
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size: 1.2rem;
+  margin: 0 0 0.7rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.65rem 0.8rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+label.row {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ink);
+}
+
+input, select {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}
+
+.w2 {
+  border-top: 1px dashed var(--line);
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media (max-width: 720px) {
+  .summary { grid-template-columns: 1fr; }
+  header.top { flex-direction: column; }
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+th, td {
+  text-align: left;
+  padding: 0.28rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.owed { color: var(--warn); font-weight: 650; }
+.refund { color: var(--accent); font-weight: 650; }
+
+.files { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.files a {
+  border: 1px solid var(--line);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  text-decoration: none;
+}
+
+.login {
+  max-width: 420px;
+  margin: 8vh auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.4rem;
+}
+
+.login h1 {
+  font-family: Georgia, "Iowan Old Style", serif;
+  margin-top: 0;
+}
+
+.login form { display: grid; gap: 0.7rem; }
+
+.notes li { margin: 0.25rem 0; }

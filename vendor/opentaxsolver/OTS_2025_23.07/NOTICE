@@ -1,0 +1,28 @@
+OpenTaxSolver 2025, version 23.07 (tax year 2025), released 2025-09-25
+on the project site and packaged 2026-09-25.
+
+Upstream: https://opentaxsolver.sourceforge.net/
+Package: OpenTaxSolver2025_23.07_linux64.tgz
+
+The calculation programs are GPL-2.0-or-later. See COPYING and the
+copyright header in each .c file. universal_pdf_file_modifier.c is
+LGPL-2.0-or-later; its header is the license for that file.
+
+This directory is a trimmed copy of that release, kept so a yearly
+update is a source drop plus `npm run build:wasm`:
+
+- src/*.c and src/Makefile are the engine. The GTK GUI (src/Gui_gtk)
+  and the prebuilt Linux binaries (bin/) are not included. Those
+  binaries are linked against a newer glibc than Hostinger provides,
+  and Hostinger cannot compile them.
+- src/formdata contains only the federal PDF backgrounds and metadata
+  this app fills (Form 1040 including Schedules 1, B, and D / Form 8949
+  pages that ship inside the 1040 package, Schedule C, Schedule SE, and
+  Form 8995). Other states' PDF images were left out to keep the repo
+  smaller. Their solver sources are still here.
+- tax_form_files contains the input templates the adapter fills.
+
+OpenTaxSolver 23.07 has no Utah TC-40 program. Utah is computed by
+the small TypeScript worksheet in src/lib/ots/utah.ts, from the
+published 2025 TC-40 instructions, using federal figures this engine
+produces.
