@@ -11,26 +11,33 @@ That is the current OTS release for the year being filed.
 
 Federal, via the vendored OpenTaxSolver engine compiled to WebAssembly:
 
-- Form 1040
-- Schedule 1 (business income, the deductible half of self-employment tax, a taxable state refund)
-- Schedule B amounts (ordinary and qualified dividends go on Form 1040 lines 3a and 3b)
-- Schedule C
-- Schedule SE
-- Schedule D totals (net short-term and long-term gain, not a sale-by-sale Form 8949)
+- Form 1040, including Schedule A (the larger of standard or itemized), Schedule B when interest or dividends require it, and Schedule D
+- Schedule 1 (business income, HSA, IRA, student loan interest, a taxable state refund, other income)
+- Schedule C and Schedule SE
+- Form 8949 when individual sales are entered, including wash-sale code W
 - Form 8995 (simplified qualified business income deduction)
+- Form 8812 (child tax credit and credit for other dependents)
+- Form 8889 (HSA) when there are contributions or distributions
 
 Utah TC-40 is **not** in OpenTaxSolver 23.07. The states OTS ships are Ohio,
 New Jersey, Virginia, Pennsylvania, Massachusetts, North Carolina, Arizona,
-Michigan, New York, Oregon, and California. Utah is a small worksheet in
-`src/lib/ots/utah.ts`: full-year resident, 4.5% rate, the taxpayer tax credit,
-withholding, and prepayments. It is not a filled Utah PDF.
+Michigan, New York, Oregon, and California. Utah is a full-year resident
+worksheet in `src/lib/ots/utah.ts`: 4.5% rate, dependent exemptions, the
+taxpayer tax credit (using the federal deduction OTS already chose), a
+subtraction for U.S. obligation interest, withholding, and prepayments. It is
+not a filled Utah PDF.
 
-Not calculated: itemized deductions, the earned income credit, the
-estimated-tax penalty, specified-service or W-2/property limits on Form 8995,
-TC-40A additions and subtractions beyond a prior-year state refund, and
-part-year or nonresident Utah returns. Someone 65 or older should compare
-OTS line 12 with Schedule 1-A; the extra standard deduction for age may have
-moved for 2025, and the sample return is under 65.
+Computed in this app, then handed to OTS: the student loan interest deduction
+(Rev. Proc. 2024-40), which dependents qualify for Form 8812, and the
+prior-year estimated-tax safe-harbor note. The SALT cap, charity limits, and
+the standard-versus-itemized choice stay inside OTS.
+
+Not calculated: the earned income credit, Form 2441, the Utah my529 credit,
+Form 8283, Form 1116 when foreign tax is over the $300/$600 election, Form
+2210, the IRA phase-out worksheet, mortgage insurance premiums, and
+specified-service or W-2/property limits on Form 8995. Someone 65 or older
+should compare OTS line 12 with Schedule 1-A; the extra standard deduction for
+age may have moved for 2025, and the sample return is under 65.
 
 This is a filing aid, not tax advice.
 

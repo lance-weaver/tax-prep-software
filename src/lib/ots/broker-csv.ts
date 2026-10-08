@@ -11,12 +11,30 @@
  *    DIV box 1a / 1b / 2a, and B gain when `term` is set.
  */
 
+export interface BrokerSale {
+  description: string;
+  dateAcquired: string;
+  dateSold: string;
+  proceeds: number;
+  cost: number;
+  basisReported: boolean;
+  washSale: number;
+  digitalAsset: boolean;
+  term: "" | "short" | "long";
+}
+
 export interface BrokerTotals {
   ordinaryDividends: number;
   qualifiedDividends: number;
   capitalGainDistributions: number;
   shortTermGain: number;
   longTermGain: number;
+  interest: number;
+  treasuryInterest: number;
+  interestWithholding: number;
+  foreignTax: number;
+  miscIncome: number;
+  sales: BrokerSale[];
   recognized: string[];
 }
 
@@ -72,6 +90,14 @@ function col(header: string[], names: string[]): number {
   return -1;
 }
 
+function isoDate(value: string): string {
+  const iso = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return `${iso[1]}-${iso[2]}-${iso[3]}`;
+  const us = value.trim().match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+  if (!us) return "";
+  return `${us[3]}-${us[1].padStart(2, "0")}-${us[2].padStart(2, "0")}`;
+}
+
 function termOf(value: string, acquired: string, sold: string): "short" | "long" | null {
   const text = value.toLowerCase();
   if (text.startsWith("s") || text.includes("short")) return "short";
@@ -96,6 +122,12 @@ export function parseBrokerCsv(text: string): BrokerTotals {
     capitalGainDistributions: 0,
     shortTermGain: 0,
     longTermGain: 0,
+    interest: 0,
+    treasuryInterest: 0,
+    interestWithholding: 0,
+    foreignTax: 0,
+    miscIncome: 0,
+    sales: [],
     recognized: [],
   };
 
@@ -109,6 +141,10 @@ export function parseBrokerCsv(text: string): BrokerTotals {
   const boxCol = col(header, ["box"]);
   const acquiredCol = col(header, ["date_acquired", "acquired", "acquisition_date"]);
   const soldCol = col(header, ["date_sold", "sold", "sale_date"]);
+  const descriptionCol = col(header, ["description", "security", "symbol"]);
+  const washCol = col(header, ["wash_sale", "wash", "disallowed_loss", "adjustment"]);
+  const basisCol = col(header, ["basis_reported", "reported"]);
+  const digitalCol = col(header, ["digital_asset", "digital"]);
 
   if (kindCol >= 0 && amountCol >= 0 && proceedsCol < 0 && formCol < 0) {
     for (const row of rows.slice(1)) {
@@ -127,6 +163,14 @@ export function parseBrokerCsv(text: string): BrokerTotals {
         totals.shortTermGain += amount;
       } else if (kind === "long_term_gain" || kind === "long_term") {
         totals.longTermGain += amount;
+      } else if (kind === "interest" || kind === "interest_income") {
+        totals.interest += amount;
+      } else if (kind === "treasury_interest" || kind === "box3") {
+        totals.treasuryInterest += amount;
+      } else if (kind === "foreign_tax") {
+        totals.foreignTax += amount;
+      } else if (kind === "misc_income" || kind === "other_income") {
+        totals.miscIncome += amount;
       }
     }
     totals.recognized.push("summary kind/amount rows");
@@ -149,6 +193,16 @@ export function parseBrokerCsv(text: string): BrokerTotals {
         totals.qualifiedDividends += amount;
       } else if (form.includes("DIV") && box === "2a") {
         totals.capitalGainDistributions += amount;
+      } else if (form.includes("DIV") && (box === "7" || box === "foreign")) {
+        totals.foreignTax += amount;
+      } else if (form.includes("INT") && (box === "1" || box === "1a")) {
+        totals.interest += amount;
+      } else if (form.includes("INT") && box === "3") {
+        totals.treasuryInterest += amount;
+      } else if (form.includes("INT") && box === "4") {
+        totals.interestWithholding += amount;
+      } else if (form.includes("MISC")) {
+        totals.miscIncome += amount;
       } else if (form.includes("B") && term === "short") {
         totals.shortTermGain += amount;
       } else if (form.includes("B") && term === "long") {
@@ -173,6 +227,19 @@ export function parseBrokerCsv(text: string): BrokerTotals {
           : num(row[proceedsCol]) - num(row[costCol]);
       if (term === "short") totals.shortTermGain += gain;
       else totals.longTermGain += gain;
+      const reportedRaw = basisCol >= 0 ? (row[basisCol] ?? "") : "Y";
+      const reported = !/^(n|no|false|0)$/i.test(reportedRaw.trim());
+      totals.sales.push({
+        description: descriptionCol >= 0 ? row[descriptionCol] ?? "Security" : "Security",
+        dateAcquired: isoDate(acquiredCol >= 0 ? row[acquiredCol] ?? "" : ""),
+        dateSold: isoDate(soldCol >= 0 ? row[soldCol] ?? "" : ""),
+        proceeds: proceedsCol >= 0 ? num(row[proceedsCol]) : 0,
+        cost: costCol >= 0 ? num(row[costCol]) : 0,
+        basisReported: reported,
+        washSale: Math.max(0, washCol >= 0 ? num(row[washCol]) : 0),
+        digitalAsset: digitalCol >= 0 && /^(y|yes|true|1)$/i.test((row[digitalCol] ?? "").trim()),
+        term,
+      });
     }
     totals.recognized.push("1099-B lot rows");
     return totals;

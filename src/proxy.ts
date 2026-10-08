@@ -31,7 +31,7 @@ function withSecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+    "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
   );
   return response;
 }

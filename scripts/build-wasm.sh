@@ -29,6 +29,8 @@ SOLVERS=(
   taxsolve_US_1040_Sched_C_2025
   taxsolve_US_1040_Sched_SE_2025
   taxsolve_f8995_2025
+  taxsolve_f8812_2025
+  taxsolve_HSA_f8889
   universal_pdf_file_modifier
 )
 

@@ -10,6 +10,8 @@ const ALLOWED = new Set([
   "sched_c_out.txt",
   "sched_se_out.txt",
   "form_8995_out.txt",
+  "form_8812_out.txt",
+  "form_8889_out.txt",
   "utah_tc40.txt",
   "summary.json",
   "us_1040.pdf",
