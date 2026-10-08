@@ -1,3 +1,5 @@
+import { dependentCounts } from "../dependents";
+import { itemizedLastYear, taxableStateRefund, treasuryInterest, utahEstimates } from "../figures";
 import type { FilingStatus, LineAmount, TaxReturn } from "../return-types";
 
 /**
@@ -56,6 +58,8 @@ export interface UtahInput {
   dependentsBornThisYear: number;
   stateTaxRefund: number;
   itemizedLastYear: boolean;
+  /** US government obligation interest, TC-40 line 8. */
+  treasuryInterest: number;
   utahWithholding: number;
   utahPrepayments: number;
 }
@@ -82,6 +86,7 @@ export function utahFromReturn(
     schedule1ALine37: number;
   },
 ): UtahResult {
+  const counts = dependentCounts(taxReturn);
   const withholding =
     taxReturn.w2s.reduce((sum, w2) => sum + w2.stateWithholding, 0) +
     taxReturn.payments.utahWithholdingExtra;
@@ -90,13 +95,14 @@ export function utahFromReturn(
     federalAgi: federal.agi,
     federalDeduction: federal.deduction,
     seniorSchedule1A: federal.schedule1ALine37,
-    dependentsAge16OrUnder: taxReturn.personal.dependentsAge16OrUnder,
-    otherDependents: taxReturn.personal.otherDependents,
-    dependentsBornThisYear: taxReturn.personal.dependentsBornThisYear,
-    stateTaxRefund: taxReturn.payments.stateTaxRefund,
-    itemizedLastYear: taxReturn.payments.itemizedLastYear,
+    dependentsAge16OrUnder: counts.utahAge16OrUnder,
+    otherDependents: counts.utahOther,
+    dependentsBornThisYear: counts.utahBornThisYear,
+    stateTaxRefund: taxableStateRefund(taxReturn),
+    itemizedLastYear: itemizedLastYear(taxReturn),
+    treasuryInterest: treasuryInterest(taxReturn),
     utahWithholding: withholding,
-    utahPrepayments: taxReturn.payments.utahPrepayments,
+    utahPrepayments: utahEstimates(taxReturn),
   });
 }
 
@@ -113,7 +119,8 @@ export function computeUtah(input: UtahInput): UtahResult {
   const line5 = 0;
   const line6 = line4 + line5;
   const line7 = input.itemizedLastYear ? input.stateTaxRefund : 0;
-  const line8 = 0;
+  // TC-40 instructions: interest from U.S. government obligations is a subtraction.
+  const line8 = Math.max(0, input.treasuryInterest);
   const line9 = line6 - line7 - line8;
   const line10 = nonNegative(line9 * RATE);
   const line11 = line2d * PERSONAL_EXEMPTION;
@@ -146,6 +153,8 @@ export function computeUtah(input: UtahInput): UtahResult {
     { line: "2c", label: "Dependents born in 2025", amount: line2c },
     { line: "2d", label: "Total qualifying dependents", amount: line2d },
     { line: "4", label: "Federal adjusted gross income", amount: line4 },
+    { line: "7", label: "State tax refund included in federal income", amount: line7 },
+    { line: "8", label: "U.S. government obligation interest", amount: line8 },
     { line: "9", label: "Utah taxable income", amount: line9 },
     { line: "10", label: "Utah tax (4.5%)", amount: line10 },
     { line: "11", label: "Utah personal exemption", amount: line11 },

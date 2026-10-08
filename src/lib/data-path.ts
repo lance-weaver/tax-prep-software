@@ -25,3 +25,13 @@ export function lastRunDir(): string {
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
+
+export function profileFilePath(): string {
+  return path.join(taxesDataPath(), "profile.json");
+}
+
+export function uploadsDir(): string {
+  const dir = path.join(taxesDataPath(), "uploads");
+  fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}

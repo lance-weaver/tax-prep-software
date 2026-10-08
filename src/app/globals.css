@@ -179,3 +179,53 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .login form { display: grid; gap: 0.7rem; }
 
 .notes li { margin: 0.25rem 0; }
+
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+
+nav.side {
+  position: sticky;
+  top: 0.75rem;
+  align-self: start;
+  display: grid;
+  gap: 0.35rem;
+}
+
+nav.side button {
+  text-align: left;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid transparent;
+}
+
+nav.side button.active {
+  background: var(--accent-soft);
+  border-color: var(--line);
+  color: var(--accent);
+}
+
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.4rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.totals strong { display: block; font-size: 1.05rem; }
+
+.review-table td { vertical-align: top; }
+
+@media (max-width: 800px) {
+  .app { grid-template-columns: 1fr; }
+  nav.side { position: static; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}

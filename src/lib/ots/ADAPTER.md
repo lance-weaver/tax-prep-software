@@ -13,16 +13,31 @@ not a rewrite.
 2. `taxsolve_US_1040_Sched_SE_2025` — self-employment tax. Line 2 is the
    Schedule C profit. Line 8a is W-2 Social Security wages (box 3, or box 1
    when box 3 was left blank).
-3. `taxsolve_US_1040_2025` with the QBI deduction still zero.
-4. `taxsolve_f8995_2025` when there is business income. It reads the pass-1
+3. `taxsolve_HSA_f8889` when there is an HSA. There is no template file;
+   `writeForm8889` writes the labels in the order the C program reads them.
+   The 2025 limits ($4,300 / $8,550 / $1,000 catch-up) are set on line 3.
+4. An extra `taxsolve_US_1040_2025` pass when student loan interest was paid,
+   with that deduction still zero, so the app can compute the phase-out from
+   AGI. The result goes on Schedule 1 line 21 of the later passes.
+5. `taxsolve_US_1040_2025` with the QBI deduction still zero.
+6. `taxsolve_f8995_2025` when there is business income. It reads the pass-1
    1040 output and the Schedule C output. Line `L1_i_c` is set to 0 so OTS
    computes qualified business income itself. The deduction it prints is `L15`.
-5. `taxsolve_US_1040_2025` again with `L13a` set to that deduction.
    The 2025 Form 8995 template has a stray `;` on `L1_iii_a`. OTS treats any
    non-empty name plus a zero amount as another auto-calculated Schedule C,
    which would count the business twice. `writeForm8995` clears that name.
-6. `universal_pdf_file_modifier` for each form that has a metadata file and a
-   PDF background in `src/formdata`. A failed overlay is not fatal.
+7. When anyone qualifies for Form 8812, another 1040 pass with QBI and no
+   credit, then `taxsolve_f8812_2025`. Line 14 is the nonrefundable credit
+   (Form 1040 line 19) and line 27 is the additional credit (line 28).
+8. `taxsolve_US_1040_2025` again with `L13a` and, when present, lines 19 and 28.
+9. `universal_pdf_file_modifier` for each form that has a metadata file and a
+   PDF background in `src/formdata`. A failed overlay is not fatal. Forms 8812
+   and 8889 have text output only; their PDF backgrounds are not in this drop.
+
+Form 8949 spreadsheets are the CSV path on the same line as
+`f8949_spreadsheet-A/D:` (and B/E, G/J, H/K), before the `{` comment. The
+CapGains label still has to follow. Leave D1ad/D1ae and D8ad/D8ae at zero when
+a spreadsheet is used.
 
 Utah is not one of these programs. `utah.ts` is a full-year resident TC-40
 worksheet that takes federal AGI (`L11a`) and the federal deduction (`L12`).
